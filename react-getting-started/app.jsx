@@ -1,3 +1,16 @@
+/**
+ * 主干流程：
+ * 1、CommendBox -> CommendBox.constructor() -> CommendBox.render()
+ * 2、CommentList -> Comment 
+ * 3、CommentForm 
+ * 
+ * 4、CommendBox.componentDidMount() -> CommendBox.leadDataFromServer() -> CommendBox.render() -> 2、3
+ * 
+ * 5、CommentForm点击 -> CommentForm.handleSubmit() -> CommendBox.handleNewComment() -> CommendBox.render() -> 2、3
+ *
+ * 其中数据的处理（ajax等）都放在了 【主组件】CommendBox 中进行，如果 【辅组件】（CommentForm）中涉及到数据，也是调用主组件（CommendBox）的方法处理
+ */
+
 class Comment extends React.Component {
 	render() {
 		return (
@@ -15,6 +28,7 @@ class Comment extends React.Component {
 
 class CommentList extends React.Component {
 	render() {
+
 		//迭代时指明一个唯一的可以，这样执行会更加高效
 		var commentsNode = this.props.comments.map(function(comment, index) {
 			return <Comment key={"comment-" + index} author={comment.author}>{comment.body}</Comment>
@@ -34,6 +48,7 @@ class CommentForm extends React.Component {
 		const body = this.refs.body.getDOMNode().value.trim();
 		const form = this.refs.form.getDOMNode();
 
+		// 这里调用的是最下边CommendBox中的onSubmit
 		this.props.onSubmit({author: author, body: body});	
 		form.reset();
 		// 输出this对象和当前触发事件
@@ -53,6 +68,7 @@ class CommentForm extends React.Component {
 
 class CommendBox extends React.Component {
 
+	//首次渲染的时候props.comments没有值，所以props为[]
 	constructor(props) {
 		super();
 		this.state = {
